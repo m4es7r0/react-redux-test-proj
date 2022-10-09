@@ -23,6 +23,10 @@ const HeroesAddForm = () => {
     const [newChar, setNewChar] = useState(null)
     const [options, setOptions] = useState([])
 
+    const [heroName, setHeroName] = useState('')
+    const [heroDescr, setHeroDescr] = useState('')
+    const [heroElement, setHeroElement] = useState('')
+
     useEffect(() => {
         request("http://localhost:3001/filters")
             .then(data => setOptions(data))
@@ -41,13 +45,17 @@ const HeroesAddForm = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
         setNewChar({
             "id": uuidv4(),
-            "name": e.target[0].value,
-            "description": e.target[1].value,
-            "element": e.target[2].value
+            "name": heroName,
+            "description": heroDescr,
+            "element": heroElement
         });
-        e.target.reset();
+
+        setHeroName('')
+        setHeroDescr('')
+        setHeroElement('')
     }
 
     return (
@@ -56,10 +64,12 @@ const HeroesAddForm = () => {
                 <label htmlFor="name" className="form-label fs-4">Имя нового героя</label>
                 <input
                     required
-                    type="text"
-                    name="name"
                     className="form-control"
+                    type="text"
                     id="name"
+                    name="name"
+                    value={heroName}
+                    onChange={(e) => setHeroName(e.target.value)}
                     placeholder="Как меня зовут?" />
             </div>
 
@@ -67,9 +77,11 @@ const HeroesAddForm = () => {
                 <label htmlFor="text" className="form-label fs-4">Описание</label>
                 <textarea
                     required
-                    name="text"
                     className="form-control"
                     id="text"
+                    name="text"
+                    value={heroDescr}
+                    onChange={(e) => setHeroDescr(e.target.value)}
                     placeholder="Что я умею?"
                     style={{ "height": '130px' }} />
             </div>
@@ -81,11 +93,13 @@ const HeroesAddForm = () => {
                     className="form-select"
                     id="element"
                     name="element"
+                    value={heroElement}
+                    onChange={(e) => setHeroElement(e.target.value)}
                 >
-                    <option hidden selected>Я владею элементом...</option>
+                    <option hidden selected value="">Я владею элементом...</option>
                     {options
-                        .filter(el => el.name !== "all")
-                        .map(el => <option key={el.name} value={el.name}>{el.title}</option>)}
+                        .filter(({ name }) => name !== "all")
+                        .map(({ name, title }) => <option key={name} value={name}>{title}</option>)}
                 </select>
             </div>
 
