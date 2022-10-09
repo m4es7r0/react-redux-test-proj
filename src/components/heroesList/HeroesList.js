@@ -2,7 +2,7 @@ import { useHttp } from '../../hooks/http.hook';
 import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { heroesFetching, heroesFetched, heroesFetchingError, heroDelete } from '../../actions';
+import { heroesFetching, heroesFetched, heroesFetchingError, heroDelete, heroFilter } from '../../actions';
 import HeroesListItem from "../heroesListItem/HeroesListItem";
 import Spinner from '../spinner/Spinner';
 
@@ -12,7 +12,7 @@ import Spinner from '../spinner/Spinner';
 // Удаление идет и с json файла при помощи метода DELETE
 
 const HeroesList = () => {
-    const { heroes, heroesLoadingStatus } = useSelector(state => state);
+    const { heroesLoadingStatus, filteredHeroes, activeFilter } = useSelector(state => state);
     const dispatch = useDispatch();
     const { request } = useHttp();
 
@@ -20,21 +20,23 @@ const HeroesList = () => {
         dispatch(heroesFetching());
         request("http://localhost:3001/heroes")
             .then(data => dispatch(heroesFetched(data)))
+            .then(() => dispatch(heroFilter(activeFilter)))
             .catch(() => dispatch(heroesFetchingError()))
 
         // eslint-disable-next-line
     }, []);
 
     const deleteChar = useCallback((id) => {
-        if (heroes.length !== 0) {
-            dispatch(heroDelete(heroes, id))
+        if (filteredHeroes.length !== 0) {
+            dispatch(heroDelete(filteredHeroes, id))
+            dispatch(heroFilter(activeFilter))
             request(`http://localhost:3001/heroes/${id}`, "DELETE")
-                .then(console.log(`next char was deleted: `, heroes.find(c => c.id === id)))
+                .then(console.log(`next char was deleted: `, filteredHeroes.find(c => c.id === id)))
                 .catch(e => console.log(e))
         }
 
         // eslint-disable-next-line
-    }, [heroes])
+    }, [filteredHeroes])
 
     if (heroesLoadingStatus === "loading") return <Spinner />;
     if (heroesLoadingStatus === "error") return <h5 className="text-center mt-5">Ошибка загрузки</h5>
@@ -49,7 +51,7 @@ const HeroesList = () => {
         })
     }
 
-    const elements = renderHeroesList(heroes);
+    const elements = renderHeroesList(filteredHeroes);
 
     return (
         <ul>
