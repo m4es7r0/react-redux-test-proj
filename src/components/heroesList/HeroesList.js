@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { heroesFetching, heroesFetched, heroesFetchingError, heroDelete, heroFilter } from '../../actions';
 import HeroesListItem from "../heroesListItem/HeroesListItem";
 import Spinner from '../spinner/Spinner';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 // Задача для этого компонента:
 // При клике на "крестик" идет удаление персонажа из общего состояния
@@ -43,20 +44,24 @@ const HeroesList = () => {
 
     const renderHeroesList = (arr) => {
         if (arr.length === 0) {
-            return <h5 className="text-center mt-5">Героев пока нет</h5>
+            return <CSSTransition timeout={450} classNames="hero">
+                <h5 className="text-center mt-5 hero_idle">Героев пока нет</h5>
+            </CSSTransition>
         }
 
         return arr.map(({ id, ...props }) => {
-            return <HeroesListItem key={id} id={id} deleteChar={deleteChar} {...props} />
+            return <CSSTransition key={id} timeout={450} classNames="hero">
+                <HeroesListItem id={id} deleteChar={deleteChar} {...props} />
+            </CSSTransition>
         })
     }
 
     const elements = renderHeroesList(filteredHeroes);
 
     return (
-        <ul>
+        <TransitionGroup component="ul">
             {elements}
-        </ul>
+        </TransitionGroup>
     )
 }
 
