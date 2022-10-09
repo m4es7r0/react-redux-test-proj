@@ -23,3 +23,10 @@ export const heroDelete = (arr, id) => {
         payload: arr.filter(char => char.id !== id)
     }
 }
+
+export const heroAdd = (char) => {
+    return {
+        type: 'HERO_ADD',
+        payload: char
+    }
+}
