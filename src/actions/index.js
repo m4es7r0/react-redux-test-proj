@@ -1,3 +1,5 @@
+import { createAction } from "@reduxjs/toolkit"
+
 export const fetchHeroes = (request) => (dispatch) => {
     dispatch(heroesFetching())
     request("http://localhost:3001/heroes")
@@ -5,42 +7,11 @@ export const fetchHeroes = (request) => (dispatch) => {
         .catch(() => dispatch(heroesFetchingError()))
 }
 
-export const heroesFetching = () => {
-    return {
-        type: 'HEROES_FETCHING'
-    }
-}
+// createAction(type: str, func?: payload) второй аргумент опциональный если не указывать то payload будет передан автоматически.
+export const heroesFetching = createAction('HEROES_FETCHING')
+export const heroesFetched = createAction('HEROES_FETCHED')
+export const heroesFetchingError = createAction('HEROES_FETCHING_ERROR')
 
-export const heroesFetched = (heroes) => {
-    return {
-        type: 'HEROES_FETCHED',
-        payload: heroes
-    }
-}
-
-export const heroesFetchingError = () => {
-    return {
-        type: 'HEROES_FETCHING_ERROR'
-    }
-}
-
-export const heroDelete = (arr, id) => {
-    return {
-        type: 'HERO_DELETE',
-        payload: arr.filter(char => char.id !== id)
-    }
-}
-
-export const heroAdd = (char) => {
-    return {
-        type: 'HERO_ADD',
-        payload: char
-    }
-}
-
-export const heroFilter = (filter) => {
-    return {
-        type: "HERO_FILTER",
-        payload: filter
-    }
-}
+export const heroDelete = createAction('HERO_DELETE', (arr, id) => ({ payload: arr.filter(char => char.id !== id) }))
+export const heroAdd = createAction('HERO_ADD')
+export const heroFilter = createAction('HERO_FILTER')
