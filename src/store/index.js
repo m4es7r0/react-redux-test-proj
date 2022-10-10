@@ -1,9 +1,10 @@
 import { createStore, combineReducers, compose, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk'
 import { filters, heroes } from '../reducers/index';
 
 
 //// MiddleWare взаемодействует только с Dispatch
-const stringMiddleWare = (store) => (dispatch) => (action) => {
+const stringMiddleWare = () => (dispatch) => (action) => {
     if (typeof action === 'string') return dispatch({ type: action })
     else return dispatch(action)
 }
@@ -24,7 +25,7 @@ const stringMiddleWare = (store) => (dispatch) => (action) => {
 const store = createStore(
     combineReducers({ heroes, filters }),
     compose(
-        applyMiddleware(stringMiddleWare),
+        applyMiddleware(thunk, stringMiddleWare),
         window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
     ));
 
