@@ -1,5 +1,6 @@
-import { createStore, combineReducers, compose, applyMiddleware } from 'redux';
+import { configureStore } from '@reduxjs/toolkit';
 import thunk from 'redux-thunk'
+
 import { filters, heroes } from '../reducers/index';
 
 
@@ -22,11 +23,18 @@ const stringMiddleWare = () => (dispatch) => (action) => {
 //     return store
 // }
 
-const store = createStore(
-    combineReducers({ heroes, filters }),
-    compose(
-        applyMiddleware(thunk, stringMiddleWare),
-        window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-    ));
+//// Vanila Redux
+// const store = createStore(
+//     combineReducers({ heroes, filters }),
+//     compose(
+//         applyMiddleware(thunk, stringMiddleWare),
+//         window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+//     ));
+
+const store = configureStore({
+    reducer: {filters, heroes},
+    middleware: [thunk, stringMiddleWare],
+    devTools: process.env.NODE_ENV !== 'production' ? true : false,
+})
 
 export default store;
