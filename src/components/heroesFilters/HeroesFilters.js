@@ -1,51 +1,58 @@
+import { useHttp } from '../../hooks/http.hook';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import classNames from 'classnames';
 
-// Задача для этого компонента:
-// Фильтры должны формироваться на основании загруженных данных
-// Фильтры должны отображать только нужных героев при выборе
-// Активный фильтр имеет класс active
-// Изменять json-файл для удобства МОЖНО!
-// Представьте, что вы попросили бэкенд-разработчика об этом
-
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { useHttp } from "../../hooks/http.hook";
-
-import { heroFilter } from '../../actions/index'
+import { fetchFilters } from '../../actions';
+import { filtersChanged } from './filtersSlice';
+import Spinner from '../spinner/Spinner';
 
 const HeroesFilters = () => {
-    const dispatch = useDispatch()
-    const { request } = useHttp()
-    const [filters, setFilters] = useState([])
+
+    const { filters, filtersLoadingStatus, activeFilter } = useSelector(state => state.filters);
+    const dispatch = useDispatch();
+    const { request } = useHttp();
 
     useEffect(() => {
-        request("http://localhost:3001/filters/")
-            .then(setFilters)
-            .catch(e => console.log(e))
-        // eslint-disable-next-line
-    }, [])
+        dispatch(fetchFilters(request));
 
-    const handleSetFilter = (e) => {
-        dispatch(heroFilter(e.target.value));
-        document.querySelectorAll('.btn-group>button').forEach(el => {
-            el.classList.remove('active')
-        })
-        e.target.classList.add('active')
+        // eslint-disable-next-line
+    }, []);
+
+    if (filtersLoadingStatus === "loading") {
+        return <Spinner />;
+    } else if (filtersLoadingStatus === "error") {
+        return <h5 className="text-center mt-5">Ошибка загрузки</h5>
     }
+
+    const renderFilters = (arr) => {
+        if (arr.length === 0) {
+            return <h5 className="text-center mt-5">Фильтры не найдены</h5>
+        }
+
+        return arr.map(({ name, style, title }) => {
+
+            const btnClass = classNames('btn', style, {
+                'active': name === activeFilter
+            });
+
+            return <button
+                key={name}
+                id={name}
+                className={btnClass}
+                onClick={() => dispatch(filtersChanged(name))}
+            >{title}</button>
+        })
+    }
+
+    const elements = renderFilters(filters);
+
     return (
         <div className="card shadow-lg mt-4">
             <div className="card-body">
                 <p className="card-text">Отфильтруйте героев по элементам</p>
                 <div className="btn-group">
-                    {filters.map(({ name, title, style }) => {
-                        return <button
-                            className={`btn ${style}`}
-                            key={name}
-                            value={name}
-                            onClick={handleSetFilter}
-                        >
-                            {title}
-                        </button>
-                    })}
+                    {elements}
                 </div>
             </div>
         </div>

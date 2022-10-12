@@ -23,7 +23,7 @@
     {
       "name": "all",
       "title": "Все",
-      "style": "btn-outline-dark active"
+      "style": "btn-outline-dark"
     },
     {
       "name": "fire",

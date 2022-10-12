@@ -11,34 +11,3 @@
 ul {
     padding: 0;
 }
-
-.hero_idle {
-    visibility: hidden;
-}
-
-.hero-enter {
-    opacity: 0;
-    transform: translateX(-500px);
-}
-
-.hero-enter-active {
-    opacity: 1;
-    transition: all 500ms ease;
-    transform: translateX(0px);
-    visibility: visible;
-}
-
-.hero-enter-done {
-    visibility: visible;
-}
-
-.hero-exit {
-    opacity: 1;
-    transform: translateX(0px);
-}
-
-.hero-exit-active {
-    opacity: 0;
-    transition: all 500ms ease;
-    transform: translateX(-500px);
-}
