@@ -49,9 +49,7 @@ export const filteredHeroesSelector = createSelector(
     }
 );
 
-const { actions, reducer } = heroesSlice;
-
-export default reducer;
+export default heroesSlice.reducer;
 
 export const {
     heroesFetching,
@@ -59,4 +57,4 @@ export const {
     heroesFetchingError,
     heroCreated,
     heroDeleted
-} = actions;
+} = heroesSlice.actions;
