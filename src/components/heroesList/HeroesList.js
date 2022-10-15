@@ -16,16 +16,16 @@ const HeroesList = () => {
         isError,
     } = useGetHeroesQuery()
 
+    const [deleteHero] = useDeleteHeroMutation()
+
     const activeFilter = useSelector(state => state.filters.activeFilter)
 
     const filteredHeroes = useMemo(() => {
         const filteredHeroes = heroes.slice()
-
+        
         if (activeFilter === 'all') return filteredHeroes
         return filteredHeroes.filter(item => item.element === activeFilter)
     }, [heroes, activeFilter])
-
-    const [deleteHero] = useDeleteHeroMutation()
 
     const onDelete = useCallback((id) => {
         deleteHero(id).unwrap()
